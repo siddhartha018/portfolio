@@ -2,98 +2,119 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Siddhartha — Portfolio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Siddhartha, portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0d0f14;--card:#161a22;--text:#e8eaf0;--muted:#8b93a7;--accent:#f5b94a}
-@media (prefers-color-scheme:light){:root{--bg:#f6f4ef;--card:#fff;--text:#1a1c22;--muted:#5d6477;--accent:#c47f00}}
-*{box-sizing:border-box;margin:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.6}
-a{color:inherit;text-decoration:none}
-nav{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:14px 5vw;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px)}
-nav b{letter-spacing:.5px}
-nav a{margin-left:20px;color:var(--muted);font-size:.95rem}
-nav a:hover{color:var(--accent)}
-.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:5vw;align-items:center;padding:8vh 5vw;max-width:1100px;margin:auto}
-.hero small{color:var(--accent);letter-spacing:2px;text-transform:uppercase}
-.hero h1{font-size:clamp(2.2rem,6vw,4rem);line-height:1.1;margin:10px 0 16px}
-.hero p{color:var(--muted);max-width:46ch}
-.btn{display:inline-block;margin-top:22px;padding:11px 24px;border-radius:99px;background:var(--accent);color:#111;font-weight:600}
-.hero img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:20px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
-section{max-width:1100px;margin:auto;padding:8vh 5vw}
-h2{font-size:1.8rem;margin-bottom:8px}
-h2::after{content:"";display:block;width:48px;height:3px;background:var(--accent);margin-top:8px}
-.about p{color:var(--muted);max-width:62ch;margin-top:18px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;margin-top:28px}
-.item{position:relative;overflow:hidden;border-radius:16px;background:var(--card);cursor:zoom-in;padding:0;border:0}
-.item img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;transition:transform .4s}
-.item:hover img{transform:scale(1.06)}
-.item span{position:absolute;left:0;right:0;bottom:0;padding:30px 14px 12px;color:#fff;font-size:.9rem;text-align:left;background:linear-gradient(transparent,rgba(0,0,0,.7))}
-#lb{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.92)}
+:root{--bg:#0b0c0f;--panel:#14161b;--line:#262932;--ink:#ece8e1;--mute:#8b8e98;--acc:#b4a1ff}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{background:var(--bg);color:var(--ink);font-family:"Inter Tight",system-ui,sans-serif;line-height:1.55;overflow-x:hidden}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+.wrap{max-width:1320px;margin:0 auto;padding:0 clamp(16px,4vw,48px)}
+.top{display:flex;justify-content:space-between;padding:22px 0;font-weight:500}
+.top nav a{margin-left:24px;color:var(--mute);text-decoration:none}
+.top nav a:hover{color:var(--ink)}
+h1{font-family:"Instrument Serif",serif;font-weight:400;font-size:clamp(4.2rem,18vw,14rem);line-height:.82;letter-spacing:-.035em;margin:clamp(40px,10vh,120px) 0 clamp(20px,4vh,40px);overflow-wrap:anywhere}
+.intro{display:flex;flex-wrap:wrap;gap:14px 48px;justify-content:space-between;align-items:end;padding-bottom:clamp(36px,7vh,70px)}
+.intro p{max-width:42ch;font-size:1.2rem;color:var(--mute)}
+.intro em{font-family:"Instrument Serif",serif;font-size:1.5rem;color:var(--ink)}
+/* filter bar */
+.bar{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.chips{display:flex;gap:10px;padding:14px 0;overflow-x:auto;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);border-radius:99px;padding:7px 16px;color:var(--mute);font-weight:500;transition:color .2s,border-color .2s}
+.chip small{margin-left:7px;font-size:.8rem;opacity:.7}
+.chip:hover{color:var(--ink);border-color:var(--mute)}
+.chip.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+/* gallery */
+#gal{position:relative;columns:3 300px;column-gap:14px;padding:24px 0 10px}
+#gal.swap .ph{animation:in .45s ease both}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.ph{position:relative;display:block;width:100%;margin:0 0 14px;break-inside:avoid;background:var(--panel);overflow:hidden;border-radius:4px}
+.ph img{display:block;width:100%;height:auto;min-height:160px;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+.ph:hover img{transform:scale(1.035)}
+.ph .tag{position:absolute;left:10px;bottom:10px;padding:4px 11px;border-radius:99px;font-size:.82rem;font-weight:500;background:rgba(11,12,15,.78);backdrop-filter:blur(6px);opacity:0;transition:opacity .25s}
+.ph:hover .tag,.ph:focus-visible .tag{opacity:1}
+@media (hover:none){.ph .tag{opacity:1}}
+/* spotlight: while the pointer is over the gallery, everything dims except around the cursor */
+#gal::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .35s;z-index:2;
+ background:radial-gradient(circle 240px at var(--mx,50%) var(--my,50%),transparent 0,transparent 35%,rgba(11,12,15,.8) 100%)}
+@media (hover:hover) and (pointer:fine){#gal.lit::after{opacity:1}}
+.msg{color:var(--mute);padding:50px 0;column-span:all}
+/* about */
+.foot{margin-top:clamp(60px,12vh,130px);padding:40px 0 30px;border-top:1px solid var(--line)}
+.foot h2{font-family:"Instrument Serif",serif;font-weight:400;font-size:2.4rem;line-height:1}
+.foot p{color:var(--mute);max-width:52ch;margin-top:14px}
+small.c{display:block;padding:20px 0 34px;color:var(--mute);font-size:.88rem;border-top:1px solid var(--line)}
+/* viewer */
+#lb{position:fixed;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(5,5,7,.97);padding:20px 20px 14px}
 #lb.open{display:flex}
-#lb img{max-width:92vw;max-height:88vh;border-radius:10px}
-#lb button{position:absolute;background:none;border:0;color:#fff;font-size:2.4rem;cursor:pointer;padding:16px}
-#x{top:0;right:8px}#p{left:6px}#n{right:6px}
-.msg{grid-column:1/-1;color:var(--muted);text-align:center;padding:30px 0}
-.tabs{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
-.tab{border:1px solid var(--muted);background:none;color:var(--text);padding:8px 18px;border-radius:99px;cursor:pointer;font:inherit;font-size:.92rem}
-.tab small{color:var(--muted);margin-left:6px}
-.tab.on{background:var(--accent);border-color:var(--accent);color:#111}
-.tab.on small{color:#111}
-.item em{display:block;font-style:normal;font-size:.72rem;opacity:.8;text-transform:uppercase;letter-spacing:1px}
-#cap{position:absolute;bottom:18px;left:0;right:0;text-align:center;color:#ddd;font-size:.9rem}
-footer{text-align:center;color:var(--muted);padding:40px 5vw;font-size:.9rem}
-.links a{display:inline-block;margin:14px 10px 0;padding:9px 20px;border:1px solid var(--muted);border-radius:99px}
-.links a:hover{border-color:var(--accent);color:var(--accent)}
-@media(max-width:760px){.hero{grid-template-columns:1fr;padding-top:4vh}nav a{margin-left:12px}}
+#lb img#li{max-width:min(94vw,1100px);max-height:72vh;border:1px solid var(--line);background:var(--panel);touch-action:pan-y}
+#cap{margin-top:14px;color:var(--mute);font-size:.95rem}
+#cap b{color:var(--ink);font-weight:500}
+#th{display:flex;gap:8px;margin-top:14px;max-width:94vw;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+#th button{flex:none;width:52px;height:52px;border:1px solid var(--line);border-radius:4px;overflow:hidden;opacity:.5}
+#th button.on{opacity:1;border-color:var(--acc)}
+#th img{width:100%;height:100%;object-fit:cover;display:block}
+.rb{position:absolute;width:46px;height:46px;border:1px solid var(--line);border-radius:50%;background:rgba(20,22,27,.9);font-size:1.5rem;line-height:1}
+.rb:hover{border-color:var(--acc);color:var(--acc)}
+#lx{top:max(14px,env(safe-area-inset-top));right:14px}
+#lp{left:14px;top:46%}
+#ln{right:14px;top:46%}
+@media (max-width:760px){.top nav a{margin-left:16px}#lp,#ln{top:auto;bottom:90px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.ph img,#gal::after,.chip{transition:none}#gal.swap .ph{animation:none}}
 </style>
 </head>
 <body>
-<nav><b>SIDDHARTHA</b><div><a href="#about">About</a><a href="#gallery">Gallery</a><a href="#contact">Contact</a></div></nav>
+<div class="wrap">
+  <div class="top"><span id="nm2"></span><nav><a href="#work">Work</a><a href="#about">About</a></nav></div>
+  <h1 id="nm"></h1>
+  <div class="intro"><p id="line"></p><em id="tot"></em></div>
+</div>
 
-<header class="hero">
-  <div>
-    <small>Portfolio</small>
-    <h1>Hi, I'm Siddhartha.</h1>
-    <p>Welcome to my corner of the internet — a few moments, a few moods, and the person behind them.</p>
-    <a class="btn" href="#gallery">View gallery</a>
-  </div>
-  <img id="heroImg" alt="Portrait" style="visibility:hidden">
-</header>
+<div class="bar" id="work"><div class="wrap"><div class="chips" id="chips" role="tablist" aria-label="Categories"></div></div></div>
 
-<section id="about" class="about">
-  <h2>About</h2>
-  <p>Write a few lines about yourself here — what you do, what you're building, and what you care about. Replace this placeholder text in index.html.</p>
-</section>
+<div class="wrap">
+  <main id="gal" aria-live="polite"><p class="msg">Loading photos…</p></main>
 
-<section id="gallery">
-  <h2>Gallery</h2>
-  <div class="tabs" id="tabs"></div>
-  <div class="grid" id="grid"></div>
-</section>
+  <section class="foot" id="about">
+    <div><h2>About</h2><p id="aboutText"></p></div>
+  </section>
+  <small class="c">&copy; <span id="yr"></span> <span id="nm3"></span></small>
+</div>
 
-<section id="contact" style="text-align:center">
-  <h2 style="display:inline-block">Contact</h2>
-  <p style="color:var(--muted);margin-top:14px">Let's connect.</p>
-  <div class="links">
-    <a href="https://github.com/siddhartha018" target="_blank" rel="noopener">GitHub</a>
-  </div>
-</section>
-
-<footer>© <span id="y"></span> Siddhartha. All rights reserved.</footer>
-
-<div id="lb"><button id="x" aria-label="Close">×</button><button id="p" aria-label="Previous">‹</button><img alt=""><div id="cap"></div><button id="n" aria-label="Next">›</button></div>
+<div id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <button class="rb" id="lx" aria-label="Close">&times;</button>
+  <button class="rb" id="lp" aria-label="Previous photo">&lsaquo;</button>
+  <img id="li" alt="">
+  <div id="cap"></div>
+  <div id="th"></div>
+  <button class="rb" id="ln" aria-label="Next photo">&rsaquo;</button>
+</div>
 
 <script>
+/* ---- edit these ---- */
+const SITE={
+  name:"Siddhartha",
+  line:"Photos, projects and moments in one place. Pick a category or browse everything.",
+  about:"Write a few lines about yourself here: who you are, what you do and what you care about."
+};
 const USER="siddhartha018", REPO="portfolio", BRANCH="main", FOLDER="images";
+/* -------------------- */
 const EXT=/\.(jpe?g|png|gif|webp|avif|svg|bmp)$/i;
 const RAW=p=>`https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/`+p.split("/").map(encodeURIComponent).join("/");
-const grid=document.getElementById("grid"),tabs=document.getElementById("tabs"),lb=document.getElementById("lb"),
-      big=lb.querySelector("img"),cap=document.getElementById("cap"),hero=document.getElementById("heroImg");
-let all=[],view=[],cur=0,active="All";
+const $=id=>document.getElementById(id);
+const nat=(a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:"base"});
+const nice=s=>s.replace(/[_-]+/g," ").trim();
+function el(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
 
-/* Each source returns full paths like "images/Mumbai/a.jpg" */
+/* --- load the file list from GitHub every time the page opens --- */
 async function fromTree(){
   const r=await fetch(`https://api.github.com/repos/${USER}/${REPO}/git/trees/${BRANCH}?recursive=1`,{cache:"no-store"});
   if(!r.ok) throw new Error("api "+r.status);
@@ -111,58 +132,94 @@ async function loadPaths(){
       if(p.length){try{localStorage.setItem("pf_paths",JSON.stringify(p))}catch(e){} return p}
     }catch(e){console.warn(e)}
   }
-  try{const c=JSON.parse(localStorage.getItem("pf_paths")||"[]"); if(c.length) return c}catch(e){}
+  try{const c=JSON.parse(localStorage.getItem("pf_paths")||"[]");if(c.length)return c}catch(e){}
   return [];
 }
-const nice=n=>n.replace(EXT,"").replace(/[_-]+/g," ").trim();
+/* folder inside images/ = category; files directly in images/ = "More" */
 function parse(path){
-  const parts=path.slice(FOLDER.length+1).split("/");
-  const file=parts.pop();
-  return {path, file, cat: parts.length?parts[0]:"Other"};
+  const parts=path.slice(FOLDER.length+1).split("/");const file=parts.pop();
+  return {path,file,cat:parts.length?parts[0]:"More"};
 }
-const natural=(a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:"base"});
 
-function buildTabs(){
-  const cats=[...new Set(all.map(x=>x.cat))].sort(natural);
-  if(cats.length>1&&cats.includes("Other")){cats.splice(cats.indexOf("Other"),1);cats.push("Other")}
-  tabs.innerHTML="";
+let all=[],view=[],active="All",idx=0;
+function chips(){
+  const cats=[...new Set(all.map(x=>x.cat))].sort(nat);
+  if(cats.includes("More")){cats.splice(cats.indexOf("More"),1);cats.push("More")}
+  const box=$("chips");box.innerHTML="";
   ["All",...cats].forEach(c=>{
     const n=c==="All"?all.length:all.filter(x=>x.cat===c).length;
-    const b=document.createElement("button");b.className="tab"+(c===active?" on":"");
-    b.innerHTML=`${c}<small>${n}</small>`;
-    b.onclick=()=>{active=c;history.replaceState(null,"","#"+encodeURIComponent(c));buildTabs();render()};
-    tabs.appendChild(b);
+    const b=el("button","chip"+(c===active?" on":""));b.setAttribute("role","tab");b.setAttribute("aria-selected",c===active);
+    b.append(document.createTextNode(c==="All"?"All":nice(c)),el("small",null,String(n)));
+    b.onclick=()=>{active=c;history.replaceState(null,"",c==="All"?location.pathname:"#"+encodeURIComponent(c));chips();render(true)};
+    box.appendChild(b);
   });
 }
-function render(){
+function render(animate){
+  const g=$("gal");g.innerHTML="";
   view=active==="All"?all:all.filter(x=>x.cat===active);
-  grid.innerHTML="";
-  if(!view.length){grid.innerHTML='<p class="msg">No images found yet. Upload images to <b>images/&lt;City&gt;/</b> on GitHub.</p>';return}
+  if(!view.length){g.appendChild(el("p","msg","No photos yet. Upload images into a folder inside images/ on GitHub and they will appear here."));return}
   view.forEach((x,i)=>{
-    const b=document.createElement("button");b.className="item";
-    const im=document.createElement("img");im.loading="lazy";im.src=RAW(x.path);im.alt=x.cat+" - "+nice(x.file);
-    im.onerror=()=>b.remove();
-    const sp=document.createElement("span");sp.innerHTML=`<em>${x.cat}</em>${nice(x.file)}`;
-    b.append(im,sp);b.onclick=()=>show(i);grid.appendChild(b);
+    const b=el("button","ph");b.setAttribute("aria-label",`Open photo ${i+1}, ${nice(x.cat)}`);
+    const im=el("img");im.src=RAW(x.path);im.alt=`${nice(x.cat)}, ${nice(x.file.replace(EXT,""))}`;im.loading="lazy";im.onerror=()=>b.remove();
+    b.append(im,el("span","tag",nice(x.cat)));b.onclick=()=>openLb(i);g.appendChild(b);
   });
+  if(animate){g.classList.remove("swap");void g.offsetWidth;g.classList.add("swap")}
 }
-function show(i){cur=(i+view.length)%view.length;const x=view[cur];big.src=RAW(x.path);cap.textContent=x.cat+" · "+nice(x.file);lb.classList.add("open")}
-document.getElementById("x").onclick=()=>lb.classList.remove("open");
-document.getElementById("p").onclick=e=>{e.stopPropagation();show(cur-1)};
-document.getElementById("n").onclick=e=>{e.stopPropagation();show(cur+1)};
-lb.onclick=e=>{if(e.target===lb)lb.classList.remove("open")};
-addEventListener("keydown",e=>{if(!lb.classList.contains("open"))return;
-  if(e.key==="Escape")lb.classList.remove("open");
-  if(e.key==="ArrowLeft")show(cur-1);if(e.key==="ArrowRight")show(cur+1)});
-document.getElementById("y").textContent=new Date().getFullYear();
+/* spotlight follows the cursor */
+(function(){
+  const g=$("gal");let raf=0;
+  g.addEventListener("pointerenter",e=>{if(e.pointerType==="mouse")g.classList.add("lit")});
+  g.addEventListener("pointerleave",()=>g.classList.remove("lit"));
+  g.addEventListener("pointermove",e=>{
+    if(e.pointerType!=="mouse"||raf)return;
+    raf=requestAnimationFrame(()=>{raf=0;const r=g.getBoundingClientRect();
+      g.style.setProperty("--mx",(e.clientX-r.left)+"px");g.style.setProperty("--my",(e.clientY-r.top)+"px")});
+  });
+})();
 
-grid.innerHTML='<p class="msg">Loading images…</p>';
-loadPaths().then(paths=>{
-  all=paths.map(parse).sort((a,b)=>natural(b.cat,a.cat)===0?natural(b.file,a.file):natural(a.cat,b.cat));
+/* --- viewer --- */
+function openLb(i){
+  idx=(i+view.length)%view.length;const x=view[idx];
+  $("li").src=RAW(x.path);$("li").alt=`${nice(x.cat)}, photo ${idx+1}`;
+  const c=$("cap");c.textContent="";const b=el("b",null,nice(x.cat));c.append(b,document.createTextNode(`  ${idx+1} of ${view.length}`));
+  const th=$("th");
+  if(view.length>1&&view.length<=60){
+    if(th.dataset.key!==active+view.length){
+      th.innerHTML="";th.dataset.key=active+view.length;
+      view.forEach((v,k)=>{const t=el("button");t.setAttribute("aria-label","Photo "+(k+1));const im=el("img");im.src=RAW(v.path);im.alt="";t.appendChild(im);t.onclick=()=>openLb(k);th.appendChild(t)});
+    }
+    [...th.children].forEach((t,k)=>t.classList.toggle("on",k===idx));
+    th.children[idx].scrollIntoView({inline:"center",block:"nearest"});
+  }else{th.innerHTML="";th.dataset.key=""}
+  $("lb").classList.add("open");document.body.style.overflow="hidden";
+}
+const closeLb=()=>{$("lb").classList.remove("open");document.body.style.overflow=""};
+$("lx").onclick=closeLb;
+$("lp").onclick=()=>openLb(idx-1);
+$("ln").onclick=()=>openLb(idx+1);
+$("lb").onclick=e=>{if(e.target===$("lb"))closeLb()};
+let sx=null;
+$("li").addEventListener("pointerdown",e=>{sx=e.clientX});
+$("li").addEventListener("pointerup",e=>{if(sx==null)return;const d=e.clientX-sx;sx=null;if(Math.abs(d)>50)openLb(idx+(d<0?1:-1))});
+addEventListener("keydown",e=>{
+  if(!$("lb").classList.contains("open"))return;
+  if(e.key==="Escape")closeLb();
+  if(e.key==="ArrowLeft")openLb(idx-1);
+  if(e.key==="ArrowRight")openLb(idx+1);
+});
+
+/* --- page text --- */
+document.title=`${SITE.name}, portfolio`;
+["nm","nm2","nm3"].forEach(i=>$(i).textContent=SITE.name);
+$("line").textContent=SITE.line;$("aboutText").textContent=SITE.about;
+$("yr").textContent=new Date().getFullYear();
+
+loadPaths().then(p=>{
+  all=p.map(parse).sort((a,b)=>nat(a.cat,b.cat)||nat(b.file,a.file));
   const h=decodeURIComponent(location.hash.slice(1));
-  if(h&&all.some(x=>x.cat===h)) active=h;
-  if(all.length){hero.src=RAW(all[0].path);hero.onload=()=>hero.style.visibility="visible"}
-  buildTabs();render();
+  if(h&&all.some(x=>x.cat===h))active=h;
+  $("tot").textContent=all.length?`${all.length} ${all.length===1?"photo":"photos"}`:"";
+  chips();render(false);
 });
 </script>
 </body>
