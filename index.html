@@ -36,6 +36,13 @@ h2::after{content:"";display:block;width:48px;height:3px;background:var(--accent
 #lb button{position:absolute;background:none;border:0;color:#fff;font-size:2.4rem;cursor:pointer;padding:16px}
 #x{top:0;right:8px}#p{left:6px}#n{right:6px}
 .msg{grid-column:1/-1;color:var(--muted);text-align:center;padding:30px 0}
+.tabs{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.tab{border:1px solid var(--muted);background:none;color:var(--text);padding:8px 18px;border-radius:99px;cursor:pointer;font:inherit;font-size:.92rem}
+.tab small{color:var(--muted);margin-left:6px}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#111}
+.tab.on small{color:#111}
+.item em{display:block;font-style:normal;font-size:.72rem;opacity:.8;text-transform:uppercase;letter-spacing:1px}
+#cap{position:absolute;bottom:18px;left:0;right:0;text-align:center;color:#ddd;font-size:.9rem}
 footer{text-align:center;color:var(--muted);padding:40px 5vw;font-size:.9rem}
 .links a{display:inline-block;margin:14px 10px 0;padding:9px 20px;border:1px solid var(--muted);border-radius:99px}
 .links a:hover{border-color:var(--accent);color:var(--accent)}
@@ -62,6 +69,7 @@ footer{text-align:center;color:var(--muted);padding:40px 5vw;font-size:.9rem}
 
 <section id="gallery">
   <h2>Gallery</h2>
+  <div class="tabs" id="tabs"></div>
   <div class="grid" id="grid"></div>
 </section>
 
@@ -75,46 +83,70 @@ footer{text-align:center;color:var(--muted);padding:40px 5vw;font-size:.9rem}
 
 <footer>© <span id="y"></span> Siddhartha. All rights reserved.</footer>
 
-<div id="lb"><button id="x" aria-label="Close">×</button><button id="p" aria-label="Previous">‹</button><img alt=""><button id="n" aria-label="Next">›</button></div>
+<div id="lb"><button id="x" aria-label="Close">×</button><button id="p" aria-label="Previous">‹</button><img alt=""><div id="cap"></div><button id="n" aria-label="Next">›</button></div>
 
 <script>
 const USER="siddhartha018", REPO="portfolio", BRANCH="main", FOLDER="images";
 const EXT=/\.(jpe?g|png|gif|webp|avif|svg|bmp)$/i;
-const RAW=n=>`https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/${FOLDER}/${encodeURIComponent(n)}`;
-const grid=document.getElementById("grid"),lb=document.getElementById("lb"),big=lb.querySelector("img"),hero=document.getElementById("heroImg");
-let photos=[],cur=0;
+const RAW=p=>`https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/`+p.split("/").map(encodeURIComponent).join("/");
+const grid=document.getElementById("grid"),tabs=document.getElementById("tabs"),lb=document.getElementById("lb"),
+      big=lb.querySelector("img"),cap=document.getElementById("cap"),hero=document.getElementById("heroImg");
+let all=[],view=[],cur=0,active="All";
 
-async function fromGitHubAPI(){
-  const r=await fetch(`https://api.github.com/repos/${USER}/${REPO}/contents/${FOLDER}?ref=${BRANCH}`,{cache:"no-store"});
+/* Each source returns full paths like "images/Mumbai/a.jpg" */
+async function fromTree(){
+  const r=await fetch(`https://api.github.com/repos/${USER}/${REPO}/git/trees/${BRANCH}?recursive=1`,{cache:"no-store"});
   if(!r.ok) throw new Error("api "+r.status);
-  return (await r.json()).filter(f=>f.type==="file").map(f=>f.name);
+  return (await r.json()).tree.filter(t=>t.type==="blob").map(t=>t.path);
 }
 async function fromJsDelivr(){
   const r=await fetch(`https://data.jsdelivr.com/v1/packages/gh/${USER}/${REPO}@${BRANCH}?structure=flat&t=${Date.now()}`);
   if(!r.ok) throw new Error("cdn "+r.status);
-  const p=`/${FOLDER}/`;
-  return (await r.json()).files.map(f=>f.name).filter(n=>n.startsWith(p)).map(n=>n.slice(p.length)).filter(n=>!n.includes("/"));
+  return (await r.json()).files.map(f=>f.name.replace(/^\//,""));
 }
-async function loadNames(){
-  for(const fn of [fromGitHubAPI,fromJsDelivr]){
-    try{const n=(await fn()).filter(x=>EXT.test(x)); if(n.length){try{localStorage.setItem("pf_names",JSON.stringify(n))}catch(e){} return n}}catch(e){console.warn(e)}
+async function loadPaths(){
+  for(const fn of [fromTree,fromJsDelivr]){
+    try{
+      const p=(await fn()).filter(x=>x.startsWith(FOLDER+"/")&&EXT.test(x));
+      if(p.length){try{localStorage.setItem("pf_paths",JSON.stringify(p))}catch(e){} return p}
+    }catch(e){console.warn(e)}
   }
-  try{const c=JSON.parse(localStorage.getItem("pf_names")||"[]"); if(c.length) return c}catch(e){}
+  try{const c=JSON.parse(localStorage.getItem("pf_paths")||"[]"); if(c.length) return c}catch(e){}
   return [];
 }
-function label(n){return n.replace(EXT,"").replace(/[_-]+/g," ").trim()}
-function render(){
-  grid.innerHTML="";
-  if(!photos.length){grid.innerHTML='<p class="msg">No images found yet. Upload images to the <b>images</b> folder on GitHub.</p>';return}
-  photos.forEach((n,i)=>{
-    const b=document.createElement("button");b.className="item";
-    const im=document.createElement("img");im.loading="lazy";im.src=RAW(n);im.alt=label(n);
-    im.onerror=()=>b.remove();
-    b.appendChild(im);b.onclick=()=>show(i);grid.appendChild(b);
-  });
-  hero.src=RAW(photos[0]);hero.onload=()=>hero.style.visibility="visible";
+const nice=n=>n.replace(EXT,"").replace(/[_-]+/g," ").trim();
+function parse(path){
+  const parts=path.slice(FOLDER.length+1).split("/");
+  const file=parts.pop();
+  return {path, file, cat: parts.length?parts[0]:"Other"};
 }
-function show(i){cur=(i+photos.length)%photos.length;big.src=RAW(photos[cur]);lb.classList.add("open")}
+const natural=(a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:"base"});
+
+function buildTabs(){
+  const cats=[...new Set(all.map(x=>x.cat))].sort(natural);
+  if(cats.length>1&&cats.includes("Other")){cats.splice(cats.indexOf("Other"),1);cats.push("Other")}
+  tabs.innerHTML="";
+  ["All",...cats].forEach(c=>{
+    const n=c==="All"?all.length:all.filter(x=>x.cat===c).length;
+    const b=document.createElement("button");b.className="tab"+(c===active?" on":"");
+    b.innerHTML=`${c}<small>${n}</small>`;
+    b.onclick=()=>{active=c;history.replaceState(null,"","#"+encodeURIComponent(c));buildTabs();render()};
+    tabs.appendChild(b);
+  });
+}
+function render(){
+  view=active==="All"?all:all.filter(x=>x.cat===active);
+  grid.innerHTML="";
+  if(!view.length){grid.innerHTML='<p class="msg">No images found yet. Upload images to <b>images/&lt;City&gt;/</b> on GitHub.</p>';return}
+  view.forEach((x,i)=>{
+    const b=document.createElement("button");b.className="item";
+    const im=document.createElement("img");im.loading="lazy";im.src=RAW(x.path);im.alt=x.cat+" - "+nice(x.file);
+    im.onerror=()=>b.remove();
+    const sp=document.createElement("span");sp.innerHTML=`<em>${x.cat}</em>${nice(x.file)}`;
+    b.append(im,sp);b.onclick=()=>show(i);grid.appendChild(b);
+  });
+}
+function show(i){cur=(i+view.length)%view.length;const x=view[cur];big.src=RAW(x.path);cap.textContent=x.cat+" · "+nice(x.file);lb.classList.add("open")}
 document.getElementById("x").onclick=()=>lb.classList.remove("open");
 document.getElementById("p").onclick=e=>{e.stopPropagation();show(cur-1)};
 document.getElementById("n").onclick=e=>{e.stopPropagation();show(cur+1)};
@@ -125,7 +157,13 @@ addEventListener("keydown",e=>{if(!lb.classList.contains("open"))return;
 document.getElementById("y").textContent=new Date().getFullYear();
 
 grid.innerHTML='<p class="msg">Loading images…</p>';
-loadNames().then(n=>{photos=n.sort((a,b)=>b.localeCompare(a,undefined,{numeric:true}));render()});
+loadPaths().then(paths=>{
+  all=paths.map(parse).sort((a,b)=>natural(b.cat,a.cat)===0?natural(b.file,a.file):natural(a.cat,b.cat));
+  const h=decodeURIComponent(location.hash.slice(1));
+  if(h&&all.some(x=>x.cat===h)) active=h;
+  if(all.length){hero.src=RAW(all[0].path);hero.onload=()=>hero.style.visibility="visible"}
+  buildTabs();render();
+});
 </script>
 </body>
 </html>
